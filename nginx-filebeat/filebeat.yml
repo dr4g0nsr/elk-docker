@@ -6,7 +6,7 @@ output:
     timeout: 15
     ssl:
       certificate_authorities:
-      - /etc/pki/tls/certs/logstash-beats.crt
+      - /etc/ssl/private/logstash-beats.crt
 
 filebeat:
   inputs:
@@ -17,7 +17,7 @@ filebeat:
       document_type: syslog
     -
       paths:
-        - "/var/log/nginx/*.log"
+        - "/root/docker/log/*.log"
       fields_under_root: true
       fields:
         type: nginx-access

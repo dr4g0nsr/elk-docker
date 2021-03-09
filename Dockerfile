@@ -12,9 +12,12 @@ ARG IMAGE=18.04-1.0.0
 
 FROM phusion/baseimage:${IMAGE}
 MAINTAINER Sebastien Pujadas http://pujadas.net
-ENV \
- REFRESHED_AT=2020-06-20
+ENV REFRESHED_AT=2020-06-20
 
+ARG ELK_VERSION=7.11.1
+ARG ELK_BASE_VERSION=7.11.1
+ARG ARCH=x86_64
+ARG JAVA_MAX_MEM=1g
 
 ###############################################################################
 #                                INSTALLATION
@@ -30,16 +33,6 @@ RUN set -x \
  && gosu nobody true \
  && set +x
 
-
-### set current package version
-
-ARG ELK_VERSION=7.11.1
-
-# base version (i.e. remove OSS prefix) for Elasticsearch and Kibana (no OSS version since 7.11.0)
-ARG ELK_BASE_VERSION=7.11.1
-
-# replace with aarch64 for ARM64 systems
-ARG ARCH=x86_64 
 
 
 ### install Elasticsearch
@@ -65,7 +58,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
  && useradd -r -s /usr/sbin/nologin -M -d ${ES_HOME} -c "Elasticsearch service user" -u ${ES_UID} -g elasticsearch elasticsearch \
  && mkdir -p /var/log/elasticsearch ${ES_PATH_CONF} ${ES_PATH_CONF}/scripts /var/lib/elasticsearch ${ES_PATH_BACKUP} \
  && chown -R elasticsearch:elasticsearch ${ES_HOME} /var/log/elasticsearch /var/lib/elasticsearch ${ES_PATH_CONF} ${ES_PATH_BACKUP}
-
 
 ### install Logstash
 
@@ -148,6 +140,9 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
     ${ES_PATH_CONF} \
  && chown -R elasticsearch:elasticsearch ${ES_PATH_CONF} \
  && chmod -R +r ${ES_PATH_CONF}
+ RUN echo "" >> /etc/elasticsearch/jvm.options
+ RUN echo "-Xms1g" >> /etc/elasticsearch/jvm.options
+ RUN echo "-Xmx1g" >> /etc/elasticsearch/jvm.options
 
 
 ### configure Logstash

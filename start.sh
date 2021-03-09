@@ -2,16 +2,6 @@
 #
 # /usr/local/bin/start.sh
 # Start Elasticsearch, Logstash and Kibana services
-#
-# spujadas 2015-10-09; added initial pidfile removal and graceful termination
-
-# WARNING - This script assumes that the ELK services are not running, and is
-#   only expected to be run once, when the container is started.
-#   Do not attempt to run this script if the ELK services are running (or be
-#   prepared to reap zombie processes).
-
-
-## handle termination gracefully
 
 _term() {
   echo "Terminating ELK"
@@ -41,6 +31,11 @@ if [ ! -z "$TZ" ]; then
   ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 fi
 
+max_map_count=`sysctl vm.max_map_count | awk '{print $3}'`
+if [ "$max_map_count" -lt "262144" ]; then
+  echo "Error: check sysctl vm.max_map_count and increase over 262144"
+  exit 1
+fi
 
 ## run pre-hooks
 if [ -x /usr/local/bin/elk-pre-hooks.sh ]; then
