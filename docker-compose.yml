@@ -8,7 +8,7 @@ version: '2.1'
 # docker-compose up
 services:
   elk:
-    image: dr4g0nsr/elk:1.5
+    image: dr4g0nsr/elk:latest
     hostname: elk
     container_name: elk
     environment:
@@ -16,9 +16,19 @@ services:
     volumes:
       - ./data:/var/lib/elasticsearch
 #      - ./log:/var/log
+      - ./config/kibana.yml:/opt/kibana/config/kibana.yml
+      - ./config/elasticsearch.yml:/opt/elasticsearch/config/elasticsearch.yml
+      - ./config/logstash-beats.crt:/etc/pki/tls/private/logstash-beats.crt
+      - ./config/logstash-beats.key:/etc/pki/tls/private/logstash-beats.key
     ports:
       - "5601:5601"
       - "9200:9200"
       - "9300:9300"
       - "9600:9600"
       - "5044:5044"
+    networks:
+      - elk_stack
+
+networks:
+  elk_stack:
+    driver: bridge

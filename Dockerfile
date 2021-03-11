@@ -149,8 +149,8 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
 
 # certs/keys for Beats and Lumberjack input
 RUN mkdir -p /etc/pki/tls/{certs,private}
-ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
-ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
+ADD ./config/logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
+ADD ./config/logstash-beats.key /etc/pki/tls/private/logstash-beats.key
 
 # pipelines
 ADD pipelines.yml ${LOGSTASH_PATH_SETTINGS}/pipelines.yml
